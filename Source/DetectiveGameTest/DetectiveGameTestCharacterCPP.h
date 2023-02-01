@@ -89,6 +89,14 @@ protected:
 	// End of APawn interface
 
 public:
+	/* True when grabbing an object. */
+	UFUNCTION(BlueprintCallable)
+	bool GetIsGrabbing() { return bIsGrabbing; }
+
+	/* True when camera is facing and in range of a grabbable object. */
+	UFUNCTION(BlueprintCallable)
+	bool IsLookingAtGrabbableObject() { return IsValid(ObjectLookingAt); }
+
 	/**
 	 * Allows locking rotation and interacting with a grabbed object along mouse X axis.
 	 * @param Val Amount to add to Yaw. This value is multiplied by the PlayerController's InputYawScale value.

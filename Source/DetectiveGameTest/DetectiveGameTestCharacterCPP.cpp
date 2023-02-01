@@ -41,6 +41,7 @@ void ADetectiveGameTestCharacterCPP::Tick(float DeltaSeconds)
 
 		bool bHit = GetWorld()->LineTraceSingleByObjectType(OutHit, Start, End, ObjectParams, Params);
 
+		ObjectLookingAt = nullptr;
 		if (bHit)
 		{
 			UActorComponent* FoundComponent = nullptr;
@@ -48,10 +49,6 @@ void ADetectiveGameTestCharacterCPP::Tick(float DeltaSeconds)
 			if (IsValid(FoundComponent))
 			{
 				ObjectLookingAt = OutHit.GetActor();
-			}
-			else
-			{
-				ObjectLookingAt = nullptr;
 			}
 		}
 	}
