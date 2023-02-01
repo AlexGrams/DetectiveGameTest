@@ -19,6 +19,8 @@ void ADetectiveGameTestCharacterCPP::SetupPlayerInputComponent(class UInputCompo
 	// Bind other interaction events
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Released, this, &ADetectiveGameTestCharacterCPP::OnPrimaryActionReleased);
 	PlayerInputComponent->BindAction("SecondaryAction", IE_Pressed, this, &ADetectiveGameTestCharacterCPP::OnSecondaryAction);
+
+	PlayerInputComponent->BindAxis("Zoom", this, &ADetectiveGameTestCharacterCPP::Zoom);
 }
 
 void ADetectiveGameTestCharacterCPP::Tick(float DeltaSeconds)
@@ -147,4 +149,10 @@ void ADetectiveGameTestCharacterCPP::AddControllerPitchInput(float Val)
 	{
 		Super::AddControllerPitchInput(Val);
 	}
+}
+
+void ADetectiveGameTestCharacterCPP::Zoom(float Val)
+{
+	float NewFOV = FMath::Clamp(Val * ZoomSensitivity * -1.0f + GetFirstPersonCameraComponent()->FieldOfView, MinFOV, MaxFOV);
+	GetFirstPersonCameraComponent()->SetFieldOfView(NewFOV);
 }

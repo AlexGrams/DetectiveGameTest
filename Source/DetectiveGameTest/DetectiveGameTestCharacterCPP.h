@@ -17,13 +17,20 @@ class DETECTIVEGAMETEST_API ADetectiveGameTestCharacterCPP : public ADetectiveGa
 protected:
 	/* Lowest FOV for zooming. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
-	float MinFOV;
+	float MinFOV = 5.0f;
+
+	/* Highest FOV for zooming. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
+	float MaxFOV = 140.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	float RotationSensitivity = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	float PanSensitivity = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
+	float ZoomSensitivity = 5.0f;
 
 	/* How far the player can interact with objects. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
@@ -64,6 +71,9 @@ protected:
 
 	/* Secondary input to stop interacting with an object. */
 	virtual void OnSecondaryAction();
+
+	/* Zoom in/out while grabbing an object. */
+	virtual void Zoom(float Val);
 
 
 	// APawn interface
