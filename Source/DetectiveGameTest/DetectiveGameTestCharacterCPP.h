@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	float RotationSensitivity = 1.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
+	float PanSensitivity = 1.0f;
+
 	/* How far the player can interact with objects. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	float GrabRange;
@@ -55,6 +58,17 @@ protected:
 
 	/* Input started. Interact with an object or start panning. */
 	virtual void OnPrimaryAction() override;
+
+	/* Input ended. Stops panning if grabbing an object. */
+	virtual void OnPrimaryActionReleased();
+
+	/* Secondary input to stop interacting with an object. */
+	virtual void OnSecondaryAction();
+
+
+	// APawn interface
+	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+	// End of APawn interface
 
 public:
 	/**

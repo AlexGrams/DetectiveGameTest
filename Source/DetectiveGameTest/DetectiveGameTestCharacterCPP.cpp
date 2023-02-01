@@ -12,6 +12,15 @@ void ADetectiveGameTestCharacterCPP::BeginPlay()
 	DefaultFOV = GetFirstPersonCameraComponent()->FieldOfView;
 }
 
+void ADetectiveGameTestCharacterCPP::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	// Bind other interaction events
+	PlayerInputComponent->BindAction("PrimaryAction", IE_Released, this, &ADetectiveGameTestCharacterCPP::OnPrimaryActionReleased);
+	PlayerInputComponent->BindAction("SecondaryAction", IE_Pressed, this, &ADetectiveGameTestCharacterCPP::OnSecondaryAction);
+}
+
 void ADetectiveGameTestCharacterCPP::Tick(float DeltaSeconds)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Tick function working."));
@@ -66,13 +75,37 @@ void ADetectiveGameTestCharacterCPP::OnPrimaryAction()
 	}
 }
 
+void ADetectiveGameTestCharacterCPP::OnPrimaryActionReleased()
+{
+	if (bIsGrabbing)
+	{
+		bIsPanning = false;
+	}
+}
+
+void ADetectiveGameTestCharacterCPP::OnSecondaryAction()
+{
+	if (bIsGrabbing)
+	{
+		LockCamera = false;
+		bIsGrabbing = false;
+		// TODO: Call grabbable object component release function
+		GrabbedObject = nullptr;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking, 0);
+		GetFirstPersonCameraComponent()->SetFieldOfView(DefaultFOV);
+	}
+}
+
 void ADetectiveGameTestCharacterCPP::AddControllerYawInput(float Val)
 {
 	if (bIsGrabbing)
 	{
 		if (bIsPanning)
 		{
-			// TODO: Pan object
+			// Pan object
+			FVector Direction = GetFirstPersonCameraComponent()->GetRightVector() * Val * PanSensitivity;
+			GrabbedObject->AddActorWorldOffset(Direction);
+			// TODO: Prevent moving too far.
 		}
 		else
 		{
@@ -96,7 +129,9 @@ void ADetectiveGameTestCharacterCPP::AddControllerPitchInput(float Val)
 	{
 		if (bIsPanning)
 		{
-
+			// Pan object
+			FVector Direction = GetFirstPersonCameraComponent()->GetUpVector() * Val * PanSensitivity * -1.0f;
+			GrabbedObject->AddActorWorldOffset(Direction);
 		}
 		else
 		{
