@@ -6,6 +6,8 @@
 #include "DetectiveGameTestCharacter.h"
 #include "DetectiveGameTestCharacterCPP.generated.h"
 
+class UGrabbableObjectComponentCPP;
+
 /**
  * 
  */
@@ -45,10 +47,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
 	TArray<TEnumAsByte<EObjectTypeQuery>> GrabbableObjectTypes;
 
-	/* TEMP: Component class of grabbable objects. Replace with actual C++ class once implemented.*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction")
-	TSubclassOf<UActorComponent> GrabbableObjectClass;
-
 	/* Base camera FOV setting for when the player is walking around. */
 	float DefaultFOV;
 
@@ -63,6 +61,9 @@ protected:
 
 	/* Object player is currently interacting with. */
 	AActor* GrabbedObject = nullptr;
+
+	/* GrabbableObjectComponentCPP of the object that the player is interacting with. */
+	UGrabbableObjectComponentCPP* GrabbedObjectComponent = nullptr;
 
 	/* Where the grabbed object will be moved to when the player picks it up. */
 	FVector GrabbedObjectStartingLocation;

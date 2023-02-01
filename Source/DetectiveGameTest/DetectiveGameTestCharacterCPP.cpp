@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GrabbableObjectComponentCPP.h"
 
 
 void ADetectiveGameTestCharacterCPP::BeginPlay()
@@ -45,7 +46,7 @@ void ADetectiveGameTestCharacterCPP::Tick(float DeltaSeconds)
 		if (bHit)
 		{
 			UActorComponent* FoundComponent = nullptr;
-			FoundComponent = OutHit.GetActor()->FindComponentByClass(GrabbableObjectClass);
+			FoundComponent = OutHit.GetActor()->FindComponentByClass(UGrabbableObjectComponentCPP::StaticClass());
 			if (IsValid(FoundComponent))
 			{
 				ObjectLookingAt = OutHit.GetActor();
@@ -63,8 +64,9 @@ void ADetectiveGameTestCharacterCPP::OnPrimaryAction()
 	// Check if the player is looking at something that can be grabbed. If so, allow them to rotate it.
 	else if (IsValid(ObjectLookingAt))
 	{
-		// TODO: set a GrabbableObjectComponent variable for later use.
 		GrabbedObject = ObjectLookingAt;
+		GrabbedObjectComponent = (UGrabbableObjectComponentCPP*)GrabbedObject->GetComponentByClass(UGrabbableObjectComponentCPP::StaticClass());
+		GrabbedObjectComponent->OnGrab();
 		bIsGrabbing = true;
 		LockCamera = true;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None, 0);
@@ -88,8 +90,9 @@ void ADetectiveGameTestCharacterCPP::OnSecondaryAction()
 	{
 		LockCamera = false;
 		bIsGrabbing = false;
-		// TODO: Call grabbable object component release function
+		GrabbedObjectComponent->OnRelease();
 		GrabbedObject = nullptr;
+		GrabbedObjectComponent = nullptr;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking, 0);
 		GetFirstPersonCameraComponent()->SetFieldOfView(DefaultFOV);
 	}
