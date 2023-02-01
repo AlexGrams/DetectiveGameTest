@@ -13,6 +13,11 @@ UCLASS()
 class DETECTIVEGAMETEST_API ADetectiveGameTestCharacterCPP : public ADetectiveGameTestCharacter
 {
 	GENERATED_BODY()
+
+private:
+	/* If the object was panned too far away from its starting position, move it back within some radius. 
+	This is to prevent the player from panning the object super far away. */
+	void LimitGrabbedObjectPanning();
 	
 protected:
 	/* Lowest FOV for zooming. */
@@ -58,6 +63,9 @@ protected:
 
 	/* Object player is currently interacting with. */
 	AActor* GrabbedObject = nullptr;
+
+	/* Where the grabbed object will be moved to when the player picks it up. */
+	FVector GrabbedObjectStartingLocation;
 
 	virtual void BeginPlay() override;
 

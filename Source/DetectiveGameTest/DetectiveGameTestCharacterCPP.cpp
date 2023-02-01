@@ -28,7 +28,7 @@ void ADetectiveGameTestCharacterCPP::Tick(float DeltaSeconds)
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Tick function working."));
 	if (bIsGrabbing)
 	{
-		// TODO: Zoom in/out
+		LimitGrabbedObjectPanning();
 	}
 	else
 	{
@@ -72,8 +72,8 @@ void ADetectiveGameTestCharacterCPP::OnPrimaryAction()
 		LockCamera = true;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None, 0);
 		// TODO: Timeline component to lerp position. Might be best to just do this part in Blueprint.
-		FVector ObjectLocation = GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * GrabRange;
-		GrabbedObject->SetActorLocation(ObjectLocation);
+		GrabbedObjectStartingLocation = GetFirstPersonCameraComponent()->GetComponentLocation() + GetFirstPersonCameraComponent()->GetForwardVector() * GrabRange;
+		GrabbedObject->SetActorLocation(GrabbedObjectStartingLocation);
 	}
 }
 
@@ -107,7 +107,6 @@ void ADetectiveGameTestCharacterCPP::AddControllerYawInput(float Val)
 			// Pan object
 			FVector Direction = GetFirstPersonCameraComponent()->GetRightVector() * Val * PanSensitivity;
 			GrabbedObject->AddActorWorldOffset(Direction);
-			// TODO: Prevent moving too far.
 		}
 		else
 		{
@@ -155,4 +154,19 @@ void ADetectiveGameTestCharacterCPP::Zoom(float Val)
 {
 	float NewFOV = FMath::Clamp(Val * ZoomSensitivity * -1.0f + GetFirstPersonCameraComponent()->FieldOfView, MinFOV, MaxFOV);
 	GetFirstPersonCameraComponent()->SetFieldOfView(NewFOV);
+}
+
+void ADetectiveGameTestCharacterCPP::LimitGrabbedObjectPanning()
+{
+	if (!IsValid(GrabbedObject))
+	{
+		return;
+	}
+
+	if (FVector::Distance(GrabbedObject->GetActorLocation(), GrabbedObjectStartingLocation) > GrabRange)
+	{
+		FVector DirectionFromStart = GrabbedObject->GetActorLocation() - GrabbedObjectStartingLocation;
+		DirectionFromStart.Normalize();
+		GrabbedObject->SetActorLocation(GrabbedObjectStartingLocation + DirectionFromStart * GrabRange);
+	}
 }
