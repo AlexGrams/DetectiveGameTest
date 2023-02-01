@@ -61,12 +61,13 @@ public:
 
 protected:
 
+	// TODO: Rename to bLockCamera
 	/** True when the player can't turn the character's viewport. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
 	bool LockCamera;
 	
 	/** Fires a projectile. */
-	void OnPrimaryAction();
+	virtual void OnPrimaryAction();
 
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
